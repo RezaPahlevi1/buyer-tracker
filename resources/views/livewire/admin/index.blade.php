@@ -3,7 +3,6 @@
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -17,16 +16,18 @@ new #[Layout('layouts.app')] class extends Component
     public ?int $editingId = null;
     public string $name = '';
     public string $email = '';
+    public string $password = '';
+    public string $password_confirmation = '';
 
     public bool $showPasswordModal = false;
     public ?int $resettingId = null;
     public string $resettingName = '';
-    public string $password = '';
-    public string $password_confirmation = '';
+    public string $newPassword = '';
+    public string $newPassword_confirmation = '';
 
     public function openCreate(): void
     {
-        $this->reset(['editingId', 'name', 'email']);
+        $this->reset(['editingId', 'name', 'email', 'password', 'password_confirmation']);
         $this->resetErrorBag();
         $this->showFormModal = true;
     }
@@ -36,42 +37,57 @@ new #[Layout('layouts.app')] class extends Component
         $this->editingId = $user->id;
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->reset(['password', 'password_confirmation']);
         $this->resetErrorBag();
         $this->showFormModal = true;
     }
 
     public function save(): void
     {
-        $data = $this->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($this->editingId),
             ],
-        ], [], ['name' => 'nama', 'email' => 'email']);
+        ];
+
+        // Password cuma wajib & divalidasi ketat saat BIKIN akun baru.
+        // Untuk edit, password tidak disentuh di sini — pakai "Reset Password" terpisah.
+        if (! $this->editingId) {
+        $rules['password'] = ['required', 'confirmed', 'min:6'];
+    }
+
+        $data = $this->validate($rules, [], [
+            'name' => 'nama',
+            'email' => 'email',
+            'password' => 'kata sandi',
+        ]);
 
         if ($this->editingId) {
             $user = User::findOrFail($this->editingId);
-            $user->fill($data);
+            $user->name = $data['name'];
+            $user->email = $data['email'];
             $user->save();
         } else {
             $user = new User();
-            $user->fill($data);
-            $user->role = UserRole::Sales; // akun baru selalu dibuat sebagai Sales
-            $user->password = Hash::make(Str::random(32));
+            $user->name = $data['name'];
+            $user->email = $data['email'];
+            $user->role = UserRole::Sales;
+            $user->password = Hash::make($data['password']);
             $user->email_verified_at = now();
             $user->save();
         }
 
         $this->showFormModal = false;
-        $this->reset(['editingId', 'name', 'email']);
+        $this->reset(['editingId', 'name', 'email', 'password', 'password_confirmation']);
     }
 
     public function openResetPassword(User $user): void
     {
         $this->resettingId = $user->id;
         $this->resettingName = $user->name;
-        $this->reset(['password', 'password_confirmation']);
+        $this->reset(['newPassword', 'newPassword_confirmation']);
         $this->resetErrorBag();
         $this->showPasswordModal = true;
     }
@@ -79,20 +95,19 @@ new #[Layout('layouts.app')] class extends Component
     public function resetPassword(): void
     {
         $this->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ], [], ['password' => 'kata sandi baru']);
+        'newPassword' => ['required', 'confirmed', 'min:6'],
+    ], [], ['newPassword' => 'kata sandi baru']);
 
         $user = User::findOrFail($this->resettingId);
-        $user->password = Hash::make($this->password);
+        $user->password = Hash::make($this->newPassword);
         $user->save();
 
         $this->showPasswordModal = false;
-        $this->reset(['resettingId', 'resettingName', 'password', 'password_confirmation']);
+        $this->reset(['resettingId', 'resettingName', 'newPassword', 'newPassword_confirmation']);
     }
 
     public function delete(User $user): void
     {
-        // Guard: superadmin tidak boleh hapus akunnya sendiri
         abort_if($user->id === auth()->id(), 403, 'Anda tidak dapat menghapus akun Anda sendiri.');
 
         $user->delete();
@@ -102,7 +117,7 @@ new #[Layout('layouts.app')] class extends Component
     {
         return [
             'users' => User::query()
-                ->orderByDesc('role') // superadmin ('superadmin') tampil di atas sales ('sales') secara alfabetis
+                ->orderByDesc('role')
                 ->orderBy('name')
                 ->paginate(10),
         ];
@@ -221,9 +236,37 @@ new #[Layout('layouts.app')] class extends Component
                     </div>
 
                     @unless ($editingId)
-                        <p class="text-xs text-gray-400">
-                            Akun baru selalu dibuat dengan role Sales dan password sementara. Gunakan "Reset Password" setelah akun dibuat.
-                        </p>
+                        <p class="text-xs text-gray-400 -mt-1">Akun baru akan dibuat dengan role Sales.</p>
+
+                        <div x-data="{ show: false }">
+                            <label class="block text-sm text-gray-600 mb-1">Password</label>
+                            <div class="relative">
+                                <input :type="show ? 'text' : 'password'" wire:model="password" autocomplete="new-password"
+                                       class="w-full rounded-md border-gray-300 shadow-sm pr-10">
+                                <button type="button" @click="show = !show"
+                                        class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600">
+                                    <svg x-show="!show" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <svg x-show="show" x-cloak class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a3 3 0 004.2 4.2"/><path d="M9.9 4.2A11 11 0 0112 4c7 0 11 7 11 7a13.2 13.2 0 01-3.1 3.8M6.5 6.6C3.7 8.4 1 12 1 12s4 7 11 7a10.6 10.6 0 004.2-.9"/></svg>
+                                </button>
+                            </div>
+                            @error('password') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                            <p class="text-xs text-gray-400 mt-1">Minimal 6 karakter</p>
+                        </div>
+
+                        <div x-data="{ show: false }">
+                            <label class="block text-sm text-gray-600 mb-1">Konfirmasi Password</label>
+                            <div class="relative">
+                                <input :type="show ? 'text' : 'password'" wire:model="password_confirmation" autocomplete="new-password"
+                                       class="w-full rounded-md border-gray-300 shadow-sm pr-10">
+                                <button type="button" @click="show = !show"
+                                        class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600">
+                                    <svg x-show="!show" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <svg x-show="show" x-cloak class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a3 3 0 004.2 4.2"/><path d="M9.9 4.2A11 11 0 0112 4c7 0 11 7 11 7a13.2 13.2 0 01-3.1 3.8M6.5 6.6C3.7 8.4 1 12 1 12s4 7 11 7a10.6 10.6 0 004.2-.9"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-gray-400">Sampaikan password ini ke pengguna secara langsung/aman — sistem tidak mengirim email otomatis.</p>
                     @endunless
 
                     <div class="flex justify-end gap-3 pt-2">
@@ -247,14 +290,24 @@ new #[Layout('layouts.app')] class extends Component
                 <p class="text-sm text-gray-500 mb-4">Untuk akun: {{ $resettingName }}</p>
 
                 <form wire:submit="resetPassword" class="space-y-4">
-                    <div>
+                    <div x-data="{ show: false }">
                         <label class="block text-sm text-gray-600 mb-1">Password Baru</label>
-                        <input type="password" wire:model="password" class="w-full rounded-md border-gray-300 shadow-sm">
-                        @error('password') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                        <div class="relative">
+                            <input :type="show ? 'text' : 'password'" wire:model="newPassword" autocomplete="new-password"
+                                   class="w-full rounded-md border-gray-300 shadow-sm pr-10">
+                            <button type="button" @click="show = !show"
+                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600">
+                                <svg x-show="!show" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg x-show="show" x-cloak class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a3 3 0 004.2 4.2"/><path d="M9.9 4.2A11 11 0 0112 4c7 0 11 7 11 7a13.2 13.2 0 01-3.1 3.8M6.5 6.6C3.7 8.4 1 12 1 12s4 7 11 7a10.6 10.6 0 004.2-.9"/></svg>
+                            </button>
+                        </div>
+                        @error('newPassword') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                        <p class="text-xs text-gray-400 mt-1">Minimal 10 karakter, kombinasi huruf besar, huruf kecil, angka, dan simbol.</p>
                     </div>
+
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Konfirmasi Password</label>
-                        <input type="password" wire:model="password_confirmation" class="w-full rounded-md border-gray-300 shadow-sm">
+                        <input type="password" wire:model="newPassword_confirmation" autocomplete="new-password" class="w-full rounded-md border-gray-300 shadow-sm">
                     </div>
 
                     <div class="flex justify-end gap-3 pt-2">
