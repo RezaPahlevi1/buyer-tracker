@@ -1,0 +1,60 @@
+<?php
+
+return [
+    [
+        'key' => 'pelanggan',
+        'label' => 'Pelanggan',
+        'route' => 'pelanggan.index',
+        'status' => 'active',
+        'roles' => null,
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>',
+    ],
+    [
+        'key' => 'vendor',
+        'label' => 'Vendor',
+        'route' => 'vendor.index',
+        'status' => 'active',
+        'roles' => null,
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 9l8-5 8 5"/><path d="M9 20v-5h6v5"/></svg>',
+    ],
+    [
+        'key' => 'produk',
+        'label' => 'Produk',
+        'route' => 'produk.index',
+        'status' => 'active',
+        'roles' => null,
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12V3M12 12l8-4.5M12 12l-8-4.5"/></svg>',
+    ],
+    [
+        'key' => 'karyawan',
+        'label' => 'Karyawan',
+        'route' => 'karyawan.index',
+        'status' => 'coming_soon',
+        'roles' => null,
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c0-1.7 1.3-3 3-3s3 1.3 3 3"/><path d="M14 9h4M14 13h4"/></svg>',
+    ],
+    [
+        'key' => 'settings',
+        'label' => 'Settings',
+        'route' => 'settings.index',
+        'status' => 'active',
+        'roles' => ['superadmin'],
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2" fill="currentColor" stroke="none"/></svg>',
+    ],
+    [
+        'key' => 'admin',
+        'label' => 'Admin',
+        'route' => 'admin.index',
+        'status' => 'active',
+        'roles' => ['superadmin'],
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9.5 12.2l1.8 1.8L15 10"/></svg>',
+    ],
+    [
+        'key' => 'coming-soon-1',
+        'label' => 'Coming Soon',
+        'route' => 'coming-soon.index',
+        'status' => 'coming_soon',
+        'roles' => null,
+        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3.5 2"/></svg>',
+    ],
+];
