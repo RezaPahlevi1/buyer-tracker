@@ -173,47 +173,58 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-semibold text-gray-700">Riwayat Pembelian</h2>
-                <button type="button" wire:click="addPurchaseRow" class="text-sm text-blue-600 hover:underline">
-                    + Tambah Produk
-                </button>
-            </div>
+       <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-gray-700">Riwayat Pembelian</h2>
+        <button type="button" wire:click="addPurchaseRow" class="text-sm text-blue-600 hover:underline">
+            + Tambah Produk
+        </button>
+    </div>
 
-            <div class="space-y-3">
-                @foreach ($purchases as $index => $row)
-                    <div wire:key="purchase-row-{{ $row['id'] ?? 'new-' . $index }}"
-                         class="grid grid-cols-12 gap-2 items-start border-b border-gray-100 pb-3">
-                        <div class="col-span-4">
-                            <select wire:model="purchases.{{ $index }}.product_id" class="w-full rounded-md border-gray-300 text-sm">
-                                <option value="">-- Pilih Produk --</option>
-                                @foreach ($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->nama_produk }}</option>
-                                @endforeach
-                            </select>
-                            @error("purchases.{$index}.product_id") <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="col-span-2">
-                            <input type="number" min="1" wire:model="purchases.{{ $index }}.jumlah"
-                                   placeholder="Qty" class="w-full rounded-md border-gray-300 text-sm">
-                        </div>
-                        <div class="col-span-3">
-                            <input type="date" wire:model="purchases.{{ $index }}.tanggal_beli"
-                                   class="w-full rounded-md border-gray-300 text-sm">
-                        </div>
-                        <div class="col-span-2">
-                            <input type="number" step="0.01" min="0" wire:model="purchases.{{ $index }}.harga_saat_beli"
-                                   placeholder="Harga" class="w-full rounded-md border-gray-300 text-sm">
-                        </div>
-                        <div class="col-span-1 text-right">
-                            <button type="button" wire:click="removePurchaseRow({{ $index }})"
-                                    class="text-red-500 text-sm hover:underline">✕</button>
-                        </div>
+    <div class="space-y-3">
+        @foreach ($purchases as $index => $row)
+            <div wire:key="purchase-row-{{ $row['id'] ?? 'new-' . $index }}"
+                 class="border border-gray-200 rounded-md p-3 sm:border-0 sm:border-b sm:border-gray-100 sm:rounded-none sm:p-0 sm:pb-3">
+                <div class="flex items-center justify-between mb-2 sm:hidden">
+                    <span class="text-xs font-semibold text-gray-500">Produk #{{ $index + 1 }}</span>
+                    <button type="button" wire:click="removePurchaseRow({{ $index }})"
+                            class="text-red-500 text-sm hover:underline">Hapus ✕</button>
+                </div>
+                <div class="flex flex-col gap-3 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-start">
+                    <div class="sm:col-span-4">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 sm:hidden">Produk</label>
+                        <select wire:model="purchases.{{ $index }}.product_id" class="w-full rounded-md border-gray-300 text-sm">
+                            <option value="">-- Pilih Produk --</option>
+                            @foreach ($products as $product)
+                                <option value="{{ $product->id }}">{{ $product->nama_produk }}</option>
+                            @endforeach
+                        </select>
+                        @error("purchases.{$index}.product_id") <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
-                @endforeach
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 sm:hidden">Jumlah</label>
+                        <input type="number" min="1" wire:model="purchases.{{ $index }}.jumlah"
+                               placeholder="Qty" class="w-full rounded-md border-gray-300 text-sm">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 sm:hidden">Tanggal Beli</label>
+                        <input type="date" wire:model="purchases.{{ $index }}.tanggal_beli"
+                               class="w-full rounded-md border-gray-300 text-sm">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 sm:hidden">Harga</label>
+                        <input type="number" step="0.01" min="0" wire:model="purchases.{{ $index }}.harga_saat_beli"
+                               placeholder="Harga" class="w-full rounded-md border-gray-300 text-sm">
+                    </div>
+                    <div class="hidden sm:block sm:col-span-1 sm:text-right">
+                        <button type="button" wire:click="removePurchaseRow({{ $index }})"
+                                class="text-red-500 text-sm hover:underline">✕</button>
+                    </div>
+                </div>
             </div>
-        </div>
+        @endforeach
+    </div>
+</div>
 
         <div class="flex items-center gap-3">
             <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700">

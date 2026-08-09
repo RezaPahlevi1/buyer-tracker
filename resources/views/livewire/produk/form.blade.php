@@ -149,43 +149,52 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-semibold text-gray-700">Vendor Pemasok</h2>
-                <button type="button" wire:click="addVendorRow" class="text-sm text-blue-600 hover:underline">
-                    + Tambah Vendor
-                </button>
-            </div>
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-gray-700">Vendor Pemasok</h2>
+        <button type="button" wire:click="addVendorRow" class="text-sm text-blue-600 hover:underline">
+            + Tambah Vendor
+        </button>
+    </div>
 
-            <div class="space-y-3">
-                @foreach ($selectedVendors as $index => $row)
-                    <div wire:key="vendor-row-{{ $index }}"
-                         class="grid grid-cols-12 gap-2 items-start border-b border-gray-100 pb-3">
-                        <div class="col-span-5">
-                            <select wire:model="selectedVendors.{{ $index }}.vendor_id" class="w-full rounded-md border-gray-300 text-sm">
-                                <option value="">-- Pilih Vendor --</option>
-                                @foreach ($vendors as $vendor)
-                                    <option value="{{ $vendor->id }}">{{ $vendor->nama_vendor }}</option>
-                                @endforeach
-                            </select>
-                            @error("selectedVendors.{$index}.vendor_id") <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="col-span-3">
-                            <input type="number" step="0.01" min="0" wire:model="selectedVendors.{{ $index }}.harga_dari_vendor"
-                                   placeholder="Harga dari vendor" class="w-full rounded-md border-gray-300 text-sm">
-                        </div>
-                        <div class="col-span-3 flex items-center gap-2 pt-2">
-                            <input type="checkbox" wire:model="selectedVendors.{{ $index }}.is_active" class="rounded border-gray-300">
-                            <label class="text-sm text-gray-600">Aktif</label>
-                        </div>
-                        <div class="col-span-1 text-right pt-2">
-                            <button type="button" wire:click="removeVendorRow({{ $index }})"
-                                    class="text-red-500 text-sm hover:underline">✕</button>
-                        </div>
+    <div class="space-y-3">
+        @foreach ($selectedVendors as $index => $row)
+            <div wire:key="vendor-row-{{ $index }}"
+                 class="border border-gray-200 rounded-md p-3 sm:border-0 sm:border-b sm:border-gray-100 sm:rounded-none sm:p-0 sm:pb-3">
+                <div class="flex items-center justify-between mb-2 sm:hidden">
+                    <span class="text-xs font-semibold text-gray-500">Vendor #{{ $index + 1 }}</span>
+                    <button type="button" wire:click="removeVendorRow({{ $index }})"
+                            class="text-red-500 text-sm hover:underline">Hapus ✕</button>
+                </div>
+                <div class="flex flex-col gap-3 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-start">
+                    <div class="sm:col-span-5">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 sm:hidden">Vendor</label>
+                        <select wire:model="selectedVendors.{{ $index }}.vendor_id" class="w-full rounded-md border-gray-300 text-sm">
+                            <option value="">-- Pilih Vendor --</option>
+                            @foreach ($vendors as $vendor)
+                                <option value="{{ $vendor->id }}">{{ $vendor->nama_vendor }}</option>
+                            @endforeach
+                        </select>
+                        @error("selectedVendors.{$index}.vendor_id") <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
-                @endforeach
+                    <div class="sm:col-span-3">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 sm:hidden">Harga dari Vendor</label>
+                        <input type="number" step="0.01" min="0" wire:model="selectedVendors.{{ $index }}.harga_dari_vendor"
+                               placeholder="Harga dari vendor" class="w-full rounded-md border-gray-300 text-sm">
+                    </div>
+                    <div class="flex items-center gap-2 sm:col-span-3 sm:pt-2">
+                        <input type="checkbox" wire:model="selectedVendors.{{ $index }}.is_active" class="rounded border-gray-300">
+                        <label class="text-sm text-gray-600">Aktif</label>
+                    </div>
+                    <div class="hidden sm:block sm:col-span-1 sm:text-right sm:pt-2">
+                        <button type="button" wire:click="removeVendorRow({{ $index }})"
+                                class="text-red-500 text-sm hover:underline">✕</button>
+                    </div>
+                </div>
             </div>
-        </div>
+        @endforeach
+    </div>
+</div>
 
         <div class="flex items-center gap-3">
             <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded-md hover:bg-gray-700">
