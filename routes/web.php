@@ -11,8 +11,6 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Volt::route('profile', 'profile')->name('profile');
-
     Volt::route('dashboard', 'dashboard-home')->name('dashboard');
 
     // Modul data — kedua role bisa akses, kontrol create/update/delete via Policy di dalam component

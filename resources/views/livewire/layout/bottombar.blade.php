@@ -21,10 +21,7 @@ new class extends Component
             <span class="text-xs uppercase tracking-wide text-gray-400">{{ auth()->user()->role->label() }}</span>
         </div>
 
-        <div class="flex items-center gap-4 text-sm">
-            <a href="{{ route('profile') }}" wire:navigate class="text-gray-500 hover:text-gray-700">
-                Profile
-            </a>
+        <div class="flex items-center text-sm">
             <button wire:click="logout" class="text-red-500 hover:text-red-600">
                 Logout
             </button>
