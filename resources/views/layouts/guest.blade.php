@@ -5,21 +5,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ \App\Models\Setting::get('app_title', config('app.name', 'Laravel')) }}</title>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/" wire:navigate>
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="font-sans text-gray-800 antialiased">
+        @php($appTitle = \App\Models\Setting::get('app_title', config('app.name', 'Laravel')))
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
+            <div class="w-full max-w-sm">
+                <div class="text-center mb-8">
+                    <h1 class="font-serif text-3xl font-semibold text-gray-800 tracking-tight">
+                        {{ $appTitle }}
+                    </h1>
+                    <div class="mt-3 mx-auto w-16" aria-hidden="true">
+                        <div class="h-[2px] bg-[#2F5D50]"></div>
+                        <div class="h-[2px] bg-[#2F5D50] mt-[3px]"></div>
+                    </div>
+                    <p class="mt-3 text-[11px] font-semibold tracking-[0.2em] text-gray-400 uppercase">
+                        Masuk ke Sistem
+                    </p>
+                </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 px-8 py-8">
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </body>
