@@ -25,6 +25,9 @@ new #[Layout('layouts.app')] class extends Component
     public string $newPassword = '';
     public string $newPassword_confirmation = '';
 
+    public ?int $confirmingDeleteId = null;
+    public string $confirmingDeleteName = '';
+
     public function openCreate(): void
     {
         $this->reset(['editingId', 'name', 'email', 'password', 'password_confirmation']);
@@ -106,11 +109,28 @@ new #[Layout('layouts.app')] class extends Component
         $this->reset(['resettingId', 'resettingName', 'newPassword', 'newPassword_confirmation']);
     }
 
-    public function delete(User $user): void
+    public function confirmDelete(int $id): void
     {
-        abort_if($user->id === auth()->id(), 403, 'Anda tidak dapat menghapus akun Anda sendiri.');
+        abort_if($id === auth()->id(), 403, 'Anda tidak dapat menghapus akun Anda sendiri.');
 
-        $user->delete();
+        $user = User::findOrFail($id);
+
+        $this->confirmingDeleteId = $id;
+        $this->confirmingDeleteName = $user->name;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->reset(['confirmingDeleteId', 'confirmingDeleteName']);
+    }
+
+    public function deleteConfirmed(): void
+    {
+        abort_if($this->confirmingDeleteId === auth()->id(), 403, 'Anda tidak dapat menghapus akun Anda sendiri.');
+
+        User::findOrFail($this->confirmingDeleteId)->delete();
+
+        $this->cancelDelete();
     }
 
     public function with(): array
@@ -150,8 +170,7 @@ new #[Layout('layouts.app')] class extends Component
                     <button wire:click="openResetPassword({{ $user->id }})" class="text-amber-600 hover:underline">Reset Password</button>
                     @if ($user->id !== auth()->id())
                         <button
-                            wire:click="delete({{ $user->id }})"
-                            wire:confirm="Yakin ingin menghapus akun ini?"
+                            wire:click="confirmDelete({{ $user->id }})"
                             class="text-red-600 hover:underline"
                         >
                             Hapus
@@ -193,8 +212,7 @@ new #[Layout('layouts.app')] class extends Component
                             <button wire:click="openResetPassword({{ $user->id }})" class="text-amber-600 hover:underline">Reset Password</button>
                             @if ($user->id !== auth()->id())
                                 <button
-                                    wire:click="delete({{ $user->id }})"
-                                    wire:confirm="Yakin ingin menghapus akun ini?"
+                                    wire:click="confirmDelete({{ $user->id }})"
                                     class="text-red-600 hover:underline"
                                 >
                                     Hapus
@@ -302,7 +320,7 @@ new #[Layout('layouts.app')] class extends Component
                             </button>
                         </div>
                         @error('newPassword') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
-                        <p class="text-xs text-gray-400 mt-1">Minimal 10 karakter, kombinasi huruf besar, huruf kecil, angka, dan simbol.</p>
+                        <p class="text-xs text-gray-400 mt-1">Minimal 6 karakter.</p>
                     </div>
 
                     <div>
@@ -322,4 +340,12 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         </div>
     @endif
+
+    <x-confirm-modal
+        :show="$confirmingDeleteId !== null"
+        title="Hapus Akun"
+        :message="'Yakin ingin menghapus akun ' . $confirmingDeleteName . '? Tindakan ini tidak dapat dibatalkan.'"
+        confirmAction="deleteConfirmed"
+        cancelAction="cancelDelete"
+    />
 </div>

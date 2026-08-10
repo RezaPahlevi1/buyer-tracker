@@ -13,16 +13,36 @@ new #[Layout('layouts.app')] class extends Component
     #[Url(as: 'q')]
     public string $search = '';
 
+    public ?int $confirmingDeleteId = null;
+    public string $confirmingDeleteLabel = '';
+
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function delete(Vendor $vendor): void
+    public function confirmDelete(int $id): void
     {
+        $vendor = Vendor::findOrFail($id);
+        $this->authorize('delete', $vendor);
+
+        $this->confirmingDeleteId = $id;
+        $this->confirmingDeleteLabel = $vendor->nama_vendor;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->reset(['confirmingDeleteId', 'confirmingDeleteLabel']);
+    }
+
+    public function deleteConfirmed(): void
+    {
+        $vendor = Vendor::findOrFail($this->confirmingDeleteId);
         $this->authorize('delete', $vendor);
 
         $vendor->delete();
+
+        $this->cancelDelete();
     }
 
     public function with(): array
@@ -82,8 +102,7 @@ new #[Layout('layouts.app')] class extends Component
                     @endcan
                     @can('delete', $vendor)
                         <button
-                            wire:click="delete({{ $vendor->id }})"
-                            wire:confirm="Yakin ingin menghapus vendor ini?"
+                            wire:click="confirmDelete({{ $vendor->id }})"
                             class="text-red-600 hover:underline"
                         >
                             Hapus
@@ -126,8 +145,7 @@ new #[Layout('layouts.app')] class extends Component
                             @endcan
                             @can('delete', $vendor)
                                 <button
-                                    wire:click="delete({{ $vendor->id }})"
-                                    wire:confirm="Yakin ingin menghapus vendor ini?"
+                                    wire:click="confirmDelete({{ $vendor->id }})"
                                     class="text-red-600 hover:underline"
                                 >
                                     Hapus
@@ -147,4 +165,12 @@ new #[Layout('layouts.app')] class extends Component
     <div class="mt-4">
         {{ $vendors->links() }}
     </div>
+
+    <x-confirm-modal
+        :show="$confirmingDeleteId !== null"
+        title="Hapus Vendor"
+        :message="'Yakin ingin menghapus vendor ' . $confirmingDeleteLabel . '? Tindakan ini tidak dapat dibatalkan.'"
+        confirmAction="deleteConfirmed"
+        cancelAction="cancelDelete"
+    />
 </div>
