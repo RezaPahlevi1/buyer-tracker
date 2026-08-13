@@ -27,7 +27,7 @@ new #[Layout('layouts.guest')] class extends Component
 <div>
     <x-auth-session-status class="mb-6 text-center" :status="session('status')" />
 
-    <form wire:submit="login" class="space-y-6">
+    <form wire:submit="login" class="space-y-5">
         <div>
             <x-input-label for="email" value="Email" />
             <x-text-input wire:model="form.email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
@@ -46,9 +46,9 @@ new #[Layout('layouts.guest')] class extends Component
         <div class="flex items-center justify-between">
             <label for="remember" class="inline-flex items-center gap-2 cursor-pointer">
                 <input wire:model="form.remember" id="remember" type="checkbox"
-                    class="rounded border-[#D8D3CA] text-[#2B2926] shadow-sm focus:ring-[#2B2926]/30"
+                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     name="remember">
-                <span class="text-sm text-[#6B6560]">Ingat saya</span>
+                <span class="text-sm text-slate-600">Ingat saya</span>
             </label>
         </div>
 

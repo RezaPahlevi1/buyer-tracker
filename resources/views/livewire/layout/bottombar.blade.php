@@ -13,16 +13,16 @@ new class extends Component
     }
 }; ?>
 
-<footer class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-40">
+<footer class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <div class="text-sm text-gray-600">
-            {{ auth()->user()->name }}
-            <span class="text-gray-300 mx-1">&middot;</span>
-            <span class="text-xs uppercase tracking-wide text-gray-400">{{ auth()->user()->role->label() }}</span>
+        <div class="text-sm text-slate-700">
+            <span class="font-medium">{{ auth()->user()->name }}</span>
+            <span class="text-slate-300 mx-1">&middot;</span>
+            <span class="text-xs text-slate-500">{{ auth()->user()->role->label() }}</span>
         </div>
 
         <div class="flex items-center text-sm">
-            <button wire:click="logout" class="text-red-500 hover:text-red-600">
+            <button wire:click="logout" class="text-xs font-medium text-red-500 hover:text-red-600 transition-colors">
                 Logout
             </button>
         </div>

@@ -47,32 +47,27 @@ new #[Layout('layouts.app')] class extends Component
     @foreach ($menus as $menu)
         <a
             href="{{ $menu['status'] === 'active' ? route($menu['route']) : '#' }}"
-            @class([
-                'w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.667rem)]',
-                'aspect-square flex flex-col items-center justify-center gap-2 p-3 sm:p-4 rounded-lg bg-white border border-[#D8D3CA] text-center',
-                'hover:border-[#2B2926] hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer' => $menu['status'] === 'active',
-                'opacity-60 cursor-not-allowed' => $menu['status'] === 'coming_soon',
-            ])
-        >
-            <div class="w-8 h-8 sm:w-9 sm:h-9 lg:w-12 lg:h-12 text-[#2B2926]">
-                {!! $menu['icon'] !!}
-            </div>
-            <span class="text-xs sm:text-sm lg:text-base font-medium text-[#2B2926] leading-tight">{{ $menu['label'] }}</span>
-            @if ($menu['status'] === 'coming_soon')
-                <span class="text-xs text-[#6B6560]">Segera hadir</span>
-            @endif
-        </a>
+                @class([
+                    'w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.667rem)]',
+                    'aspect-square flex flex-col items-center justify-center gap-2 p-3 sm:p-4 rounded-lg bg-white border border-slate-200 shadow-sm text-center group',
+                    'hover:border-blue-500 hover:shadow-md transition-all duration-150 cursor-pointer' => $menu['status'] === 'active',
+                    'opacity-50 cursor-not-allowed' => $menu['status'] === 'coming_soon',
+                ])
+            >
+                <div class="w-8 h-8 sm:w-9 sm:h-9 lg:w-12 lg:h-12 text-slate-600 group-hover:text-blue-600 transition-colors">
+                    {!! $menu['icon'] !!}
+                </div>
+                <span class="text-xs sm:text-sm lg:text-base font-medium text-slate-700 group-hover:text-blue-600 leading-tight transition-colors">{{ $menu['label'] }}</span>
+                @if ($menu['status'] === 'coming_soon')
+                    <span class="text-xs text-slate-400">Segera hadir</span>
+                @endif
+            </a>
     @endforeach
 </div>
         </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-baseline gap-3 mb-4">
-            <h2 class="font-serif text-lg text-[#2B2926]">Ringkasan</h2>
-            <div class="flex-1 h-px bg-[#D8D3CA]"></div>
-        </div>
-
         @php
             $ringkasan = [
                 ['label' => 'Pelanggan', 'value' => $totalPelanggan],
@@ -82,19 +77,24 @@ new #[Layout('layouts.app')] class extends Component
             ];
         @endphp
 
-        <div class="bg-white border border-[#D8D3CA] rounded-lg overflow-hidden">
-            {{-- Mobile: grid 2x2 ala sel tabel buku besar --}}
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-4">
+            <div class="h-1 bg-blue-600"></div>
+            <div class="px-5 py-3 border-b border-slate-200">
+                <span class="text-sm font-medium text-slate-700">Ringkasan</span>
+            </div>
+
+            {{-- Mobile: grid 2x2 --}}
             <div class="grid grid-cols-2 sm:hidden">
                 @foreach ($ringkasan as $item)
                     <div @class([
-                        'text-center px-3 py-4 border-[#D8D3CA]',
+                        'text-center px-3 py-4 border-slate-200',
                         'border-r' => $loop->index % 2 === 0,
                         'border-b' => $loop->index < 2,
                     ])>
-                        <p class="text-[10px] font-semibold tracking-[0.15em] text-[#6B6560] uppercase mb-1.5">
+                        <p class="text-xs text-slate-500 mb-1.5">
                             {{ $item['label'] }}
                         </p>
-                        <p class="font-serif text-2xl font-semibold text-[#2B2926] tabular-nums">
+                        <p class="text-2xl font-semibold text-slate-800 tabular-nums">
                             {{ $item['value'] }}
                         </p>
                     </div>
@@ -102,13 +102,13 @@ new #[Layout('layouts.app')] class extends Component
             </div>
 
             {{-- sm ke atas: strip horizontal --}}
-            <div class="hidden sm:flex divide-x divide-[#D8D3CA]">
+            <div class="hidden sm:flex divide-x divide-slate-200">
                 @foreach ($ringkasan as $item)
                     <div class="flex-1 min-w-0 px-6 py-5 text-center">
-                        <p class="text-[10px] font-semibold tracking-[0.15em] text-[#6B6560] uppercase mb-1.5">
+                        <p class="text-xs text-slate-500 mb-1.5">
                             {{ $item['label'] }}
                         </p>
-                        <p class="font-serif text-3xl font-semibold text-[#2B2926] tabular-nums">
+                        <p class="text-3xl font-semibold text-slate-800 tabular-nums">
                             {{ $item['value'] }}
                         </p>
                     </div>
@@ -116,3 +116,4 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         </div>
     </div>
+</div>
