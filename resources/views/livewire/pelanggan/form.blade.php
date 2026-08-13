@@ -174,11 +174,11 @@ new #[Layout('layouts.app')] class extends Component
         </div>
 
        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold text-gray-700">Riwayat Pembelian</h2>
-        <button type="button" wire:click="addPurchaseRow" class="text-sm text-blue-600 hover:underline">
-            + Tambah Produk
-        </button>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-semibold text-gray-700">Riwayat Pembelian</h2>
+            <button type="button" wire:click="addPurchaseRow" class="text-sm text-blue-600 hover:underline">
+                + Tambah Produk
+            </button>
     </div>
 
     <div class="space-y-3">
@@ -198,6 +198,9 @@ new #[Layout('layouts.app')] class extends Component
                             @foreach ($products as $product)
                                 <option value="{{ $product->id }}">{{ $product->nama_produk }}</option>
                             @endforeach
+                            @if ($row['product_id'] && ! $products->contains('id', $row['product_id']))
+                                <option value="{{ $row['product_id'] }}" disabled>(Produk telah dihapus — pilih ulang)</option>
+                            @endif
                         </select>
                         @error("purchases.{$index}.product_id") <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>

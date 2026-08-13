@@ -10,24 +10,24 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-800 antialiased">
+    <body class="font-sans text-[#2B2926] antialiased">
         @php($appTitle = \App\Models\Setting::get('app_title', config('app.name', 'Laravel')))
-        <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
+        <div class="min-h-screen flex flex-col items-center justify-center bg-[#FAF9F6] px-4 py-10">
             <div class="w-full max-w-sm">
                 <div class="text-center mb-8">
-                    <h1 class="font-serif text-3xl font-semibold text-gray-800 tracking-tight">
+                    <h1 class="font-serif text-3xl font-semibold text-[#2B2926] tracking-tight">
                         {{ $appTitle }}
                     </h1>
                     <div class="mt-3 mx-auto w-16" aria-hidden="true">
-                        <div class="h-[2px] bg-[#2F5D50]"></div>
-                        <div class="h-[2px] bg-[#2F5D50] mt-[3px]"></div>
+                        <div class="h-[2px] bg-[#2B2926]"></div>
+                        <div class="h-[2px] bg-[#2B2926] mt-[3px]"></div>
                     </div>
-                    <p class="mt-3 text-[11px] font-semibold tracking-[0.2em] text-gray-400 uppercase">
+                    <p class="mt-3 text-[11px] font-semibold tracking-[0.2em] text-[#6B6560] uppercase">
                         Masuk ke Sistem
                     </p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-100 px-8 py-8">
+                <div class="bg-white border border-[#D8D3CA] rounded-lg px-8 py-8">
                     {{ $slot }}
                 </div>
             </div>

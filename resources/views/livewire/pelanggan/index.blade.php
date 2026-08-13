@@ -95,7 +95,7 @@ new #[Layout('layouts.app')] class extends Component
                 <div class="text-gray-500 mt-0.5">{{ $buyer->no_hp }}</div>
                 <div class="text-gray-500 mt-1">
                     @if ($buyer->latestPurchase)
-                        {{ $buyer->latestPurchase->product->nama_produk }}
+                        {{ $buyer->latestPurchase->product?->nama_produk ?? 'Produk telah dihapus' }}
                         <span class="text-gray-400">({{ $buyer->purchases_count }} transaksi)</span>
                     @else
                         <span class="text-gray-400">Belum ada transaksi</span>
@@ -145,7 +145,7 @@ new #[Layout('layouts.app')] class extends Component
                         <td class="px-4 py-3">{{ $buyer->no_hp }}</td>
                         <td class="px-4 py-3">
                             @if ($buyer->latestPurchase)
-                                {{ $buyer->latestPurchase->product->nama_produk }}
+                                {{ $buyer->latestPurchase->product?->nama_produk ?? 'Produk telah dihapus' }}
                                 <span class="text-gray-400">({{ $buyer->purchases_count }} transaksi)</span>
                             @else
                                 <span class="text-gray-400">Belum ada</span>

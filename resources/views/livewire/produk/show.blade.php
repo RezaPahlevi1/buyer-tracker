@@ -18,7 +18,21 @@ new #[Layout('layouts.app')] class extends Component
         $this->product = $product->load(['creator', 'updater']);
     }
 
-    public function delete(): void
+    public bool $confirmingDelete = false;
+
+    public function confirmDelete(): void
+    {
+        $this->authorize('delete', $this->product);
+
+        $this->confirmingDelete = true;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->confirmingDelete = false;
+    }
+
+    public function deleteConfirmed(): void
     {
         $this->authorize('delete', $this->product);
 
@@ -59,8 +73,7 @@ new #[Layout('layouts.app')] class extends Component
             @endcan
             @can('delete', $product)
                 <button
-                    wire:click="delete"
-                    wire:confirm="Yakin ingin menghapus produk ini?"
+                    wire:click="confirmDelete"
                     class="px-4 py-2 border border-red-300 text-red-600 text-sm rounded-md hover:bg-red-50"
                 >
                     Hapus
@@ -234,4 +247,11 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         @endif
     </div>
+    <x-confirm-modal
+            :show="$confirmingDelete"
+            title="Hapus Produk"
+            :message="'Yakin ingin menghapus produk ' . $product->nama_produk . '? Tindakan ini tidak dapat dibatalkan.'"
+            confirmAction="deleteConfirmed"
+            cancelAction="cancelDelete"
+        />
 </div>

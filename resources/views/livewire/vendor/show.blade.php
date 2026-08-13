@@ -15,7 +15,21 @@ new #[Layout('layouts.app')] class extends Component
         $this->vendor = $vendor->load(['creator', 'updater']);
     }
 
-    public function delete(): void
+    public bool $confirmingDelete = false;
+
+    public function confirmDelete(): void
+    {
+        $this->authorize('delete', $this->vendor);
+
+        $this->confirmingDelete = true;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->confirmingDelete = false;
+    }
+
+    public function deleteConfirmed(): void
     {
         $this->authorize('delete', $this->vendor);
 
@@ -52,8 +66,7 @@ new #[Layout('layouts.app')] class extends Component
             @endcan
             @can('delete', $vendor)
                 <button
-                    wire:click="delete"
-                    wire:confirm="Yakin ingin menghapus vendor ini?"
+                    wire:click="confirmDelete"
                     class="px-4 py-2 border border-red-300 text-red-600 text-sm rounded-md hover:bg-red-50"
                 >
                     Hapus
@@ -171,4 +184,11 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         @endif
     </div>
+    <x-confirm-modal
+        :show="$confirmingDelete"
+        title="Hapus Vendor"
+        :message="'Yakin ingin menghapus vendor ' . $vendor->nama_vendor . '? Tindakan ini tidak dapat dibatalkan.'"
+        confirmAction="deleteConfirmed"
+        cancelAction="cancelDelete"
+    />
 </div>

@@ -46,9 +46,9 @@ new #[Layout('layouts.guest')] class extends Component
         <div class="flex items-center justify-between">
             <label for="remember" class="inline-flex items-center gap-2 cursor-pointer">
                 <input wire:model="form.remember" id="remember" type="checkbox"
-                       class="rounded border-gray-300 text-[#2F5D50] shadow-sm focus:ring-[#2F5D50]/40"
-                       name="remember">
-                <span class="text-sm text-gray-600">Ingat saya</span>
+                    class="rounded border-[#D8D3CA] text-[#2B2926] shadow-sm focus:ring-[#2B2926]/30"
+                    name="remember">
+                <span class="text-sm text-[#6B6560]">Ingat saya</span>
             </label>
         </div>
 

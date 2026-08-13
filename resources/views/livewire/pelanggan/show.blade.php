@@ -18,7 +18,21 @@ new #[Layout('layouts.app')] class extends Component
         $this->buyer = $buyer->load(['creator', 'updater']);
     }
 
-    public function delete(): void
+    public bool $confirmingDelete = false;
+
+    public function confirmDelete(): void
+    {
+        $this->authorize('delete', $this->buyer);
+
+        $this->confirmingDelete = true;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->confirmingDelete = false;
+    }
+
+    public function deleteConfirmed(): void
     {
         $this->authorize('delete', $this->buyer);
 
@@ -58,8 +72,7 @@ new #[Layout('layouts.app')] class extends Component
             @endcan
             @can('delete', $buyer)
                 <button
-                    wire:click="delete"
-                    wire:confirm="Yakin ingin menghapus pelanggan ini? Riwayat transaksinya juga akan ikut terhapus."
+                    wire:click="confirmDelete"
                     class="px-4 py-2 border border-red-300 text-red-600 text-sm rounded-md hover:bg-red-50"
                 >
                     Hapus
@@ -117,7 +130,7 @@ new #[Layout('layouts.app')] class extends Component
                 @foreach ($purchases as $purchase)
                     <div wire:key="purchase-mobile-{{ $purchase->id }}" class="border border-gray-100 rounded-md p-3 text-sm">
                         <div class="flex justify-between items-start gap-2">
-                            <span class="font-medium text-gray-800">{{ $purchase->product->nama_produk }}</span>
+                            <span class="font-medium text-gray-800">{{ $purchase->product?->nama_produk ?? 'Produk telah dihapus' }}</span>
                             <span class="text-gray-500 whitespace-nowrap">{{ $purchase->tanggal_beli->format('d M Y') }}</span>
                         </div>
                         <div class="mt-1 text-gray-500">
@@ -148,7 +161,7 @@ new #[Layout('layouts.app')] class extends Component
                         @foreach ($purchases as $purchase)
                             <tr wire:key="purchase-{{ $purchase->id }}">
                                 <td class="px-4 py-2">{{ $purchase->tanggal_beli->format('d M Y') }}</td>
-                                <td class="px-4 py-2">{{ $purchase->product->nama_produk }}</td>
+                                <td class="px-4 py-2">{{ $purchase->product?->nama_produk ?? 'Produk telah dihapus' }}</td>
                                 <td class="px-4 py-2 text-right">{{ $purchase->jumlah }}</td>
                                 <td class="px-4 py-2 text-right">
                                     {{ $purchase->harga_saat_beli ? 'Rp ' . number_format($purchase->harga_saat_beli, 0, ',', '.') : '-' }}
@@ -165,4 +178,11 @@ new #[Layout('layouts.app')] class extends Component
             </div>
         @endif
     </div>
+    <x-confirm-modal
+        :show="$confirmingDelete"
+        title="Hapus Pelanggan"
+        :message="'Yakin ingin menghapus pelanggan ' . $buyer->nama . '? Riwayat transaksinya juga akan ikut terhapus.'"
+        confirmAction="deleteConfirmed"
+        cancelAction="cancelDelete"
+    />
 </div>
