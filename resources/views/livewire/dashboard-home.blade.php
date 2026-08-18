@@ -2,15 +2,12 @@
 use App\Models\Buyer;
 use App\Models\Product;
 use App\Models\Purchase;
-use App\Models\Setting;
 use App\Models\Vendor;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 new #[Layout('layouts.app')] class extends Component
 {
     public array $menus = [];
-    public string $backgroundType = 'color';
-    public ?string $backgroundValue = null;
     public int $totalPelanggan = 0;
     public int $totalVendor = 0;
     public int $totalProduk = 0;
@@ -22,8 +19,6 @@ new #[Layout('layouts.app')] class extends Component
             ->filter(fn (array $menu) => $menu['roles'] === null || in_array($user->role->value, $menu['roles'], true))
             ->values()
             ->all();
-        $this->backgroundType = Setting::get('menu_background_type', 'color');
-        $this->backgroundValue = Setting::get('menu_background_value', '#f3f4f6');
 
         $this->totalPelanggan = Buyer::count();
         $this->totalVendor = Vendor::count();
@@ -34,16 +29,8 @@ new #[Layout('layouts.app')] class extends Component
     }
 }; ?>
 <div>
-    <div
-        class="w-screen -mt-8 ml-[calc(50%-50vw)] mr-[calc(50%-50vw)]"
-        @if ($backgroundType === 'image' && $backgroundValue)
-            style="background-image: url('{{ Illuminate\Support\Facades\Storage::url($backgroundValue) }}'); background-size: cover; background-position: center;"
-        @else
-            style="background-color: {{ $backgroundValue }};"
-        @endif
-    >
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex flex-wrap justify-center gap-3 sm:gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-wrap justify-center gap-3 sm:gap-4">
     @foreach ($menus as $menu)
         <a
             href="{{ $menu['status'] === 'active' ? route($menu['route']) : '#' }}"
@@ -64,7 +51,6 @@ new #[Layout('layouts.app')] class extends Component
             </a>
     @endforeach
 </div>
-        </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -78,7 +64,6 @@ new #[Layout('layouts.app')] class extends Component
         @endphp
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-4">
-            <div class="h-1 bg-blue-600"></div>
             <div class="px-5 py-3 border-b border-slate-200">
                 <span class="text-sm font-medium text-slate-700">Ringkasan</span>
             </div>

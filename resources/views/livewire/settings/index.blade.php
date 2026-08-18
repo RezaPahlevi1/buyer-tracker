@@ -76,6 +76,8 @@ new #[Layout('layouts.app')] class extends Component
         }
 
         session()->flash('status', 'Pengaturan berhasil disimpan.');
+
+        $this->redirect(route('settings.index'), navigate: true);
     }
 }; ?>
 
@@ -99,7 +101,7 @@ new #[Layout('layouts.app')] class extends Component
         </div>
 
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
-            <h2 class="text-sm font-semibold text-gray-700">Background Menu Dashboard</h2>
+            <h2 class="text-sm font-semibold text-gray-700">Background Aplikasi</h2>
 
             <div class="flex flex-col sm:flex-row gap-3">
                 <label class="flex items-center gap-2 text-sm">

@@ -8,7 +8,18 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-slate-800 antialiased">
-        <div class="min-h-screen bg-slate-50 flex flex-col">
+        @php
+            $pageBackgroundType = \App\Models\Setting::get('menu_background_type', 'color');
+            $pageBackgroundValue = \App\Models\Setting::get('menu_background_value', '#f3f4f6');
+        @endphp
+        <div
+            class="min-h-screen flex flex-col"
+            @if ($pageBackgroundType === 'image' && $pageBackgroundValue)
+                style="background-image: url('{{ \Illuminate\Support\Facades\Storage::url($pageBackgroundValue) }}'); background-size: cover; background-position: center;"
+            @else
+                style="background-color: {{ $pageBackgroundValue }};"
+            @endif
+        >
             <livewire:layout.topbar />
 
             <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 pb-24">
